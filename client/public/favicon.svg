@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <radialGradient id="stone" cx="35%" cy="28%" r="85%">
+      <stop offset="0" stop-color="#303236"/>
+      <stop offset="0.5" stop-color="#141518"/>
+      <stop offset="1" stop-color="#060607"/>
+    </radialGradient>
+    <linearGradient id="amber" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#E2B07A"/>
+      <stop offset="1" stop-color="#A86E35"/>
+    </linearGradient>
+    <linearGradient id="sheen" x1="0.1" y1="0" x2="0.7" y2="0.8">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.28"/>
+      <stop offset="0.5" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <clipPath id="cut"><circle cx="32" cy="32" r="30"/></clipPath>
+  </defs>
+  <circle cx="32" cy="32" r="30" fill="url(#stone)"/>
+  <g clip-path="url(#cut)"><g transform="rotate(-32 26 42)">
+    <ellipse cx="26" cy="42" rx="40" ry="27" fill="none" stroke="#EDE9E2" stroke-opacity="0.18" stroke-width="1.2"/>
+    <ellipse cx="26" cy="42" rx="31" ry="21" fill="none" stroke="#EDE9E2" stroke-opacity="0.32" stroke-width="1.6"/>
+    <ellipse cx="26" cy="42" rx="22.5" ry="15" fill="none" stroke="url(#amber)" stroke-width="3.6"/>
+    <ellipse cx="26" cy="42" rx="14" ry="9.2" fill="none" stroke="#EDE9E2" stroke-opacity="0.75" stroke-width="2"/>
+    <ellipse cx="26" cy="42" rx="6.5" ry="4.2" fill="#EDE9E2" fill-opacity="0.9"/>
+  </g></g>
+  <circle cx="32" cy="32" r="30" fill="url(#sheen)"/>
+  <circle cx="32" cy="32" r="29.5" fill="none" stroke="#FFFFFF" stroke-opacity="0.10" stroke-width="1"/>
+</svg>
