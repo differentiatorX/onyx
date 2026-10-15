@@ -1,16 +1,8 @@
 <div align="center">
 
-<a href="https://github.com/differentiatorX/onyx">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/brand/onyx-logo-dark.svg">
-    <img alt="Onyx" src="docs/brand/onyx-logo-light.svg" width="300">
-  </picture>
-</a>
+<a href="https://differentiatorx.github.io/onyx/"><img alt="Onyx: payments, set in stone. A payment gateway built to stay correct when everything around it fails." src="docs/readme/hero.svg" width="100%"></a>
 
-<h3>Payments, set in stone.</h3>
-
-<p>A payment gateway built to stay correct when everything around it fails.<br>
-Idempotent APIs, a double-entry ledger, a transactional outbox and reconciliation, on MERN.</p>
+<br><br>
 
 <p>
   <a href="https://github.com/differentiatorX/onyx/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/differentiatorX/onyx/actions/workflows/ci.yml/badge.svg"></a>
@@ -41,11 +33,9 @@ Idempotent APIs, a double-entry ledger, a transactional outbox and reconciliatio
 
 <br>
 
-<img alt="Onyx dashboard overview" src="docs/screenshots/overview.png" width="900">
+<img alt="15 failure modes handled by design, 30 unit tests on the money paths, 8 webhook retries before a dead letter, 100% of ledger entries balanced" src="docs/readme/stats.svg" width="100%">
 
 </div>
-
----
 
 ## Overview
 
@@ -56,6 +46,12 @@ Onyx is a banded stone: layer upon layer, laid down permanently. That is the ide
 Merchants create payments through a REST API, customers pay on a hosted checkout, and every rupee is booked in a **double-entry ledger** that proves itself balanced. Merchants are notified through **signed webhooks** that survive crashes and outages. Balances are **settled** to merchants and **reconciled** against the bank's own records.
 
 It ships with a deliberately unreliable **mock bank** that declines payments, goes silent, and sends duplicate and out-of-order webhooks, so every failure mode can be demonstrated live. Switch one environment variable to run against **Razorpay test mode** instead.
+
+<p align="center">
+  <img alt="Animated ledger: a capture and a refund, debits equal credits at 6,090.00" src="docs/readme/ledger.svg" width="620">
+  <br>
+  <sub>Every rupee is booked twice. A capture and a refund, closing at 6,090.00 on both sides.</sub>
+</p>
 
 <table>
 <tr>
@@ -80,7 +76,12 @@ State change, ledger entry and webhook event commit in one MongoDB transaction, 
 </tr>
 </table>
 
+
+<p align="center"><img src="docs/readme/divider.svg" width="100%" alt=""></p>
+
 ## Screenshots
+
+<p align="center"><img alt="Onyx dashboard overview" src="docs/screenshots/overview.png" width="100%"></p>
 
 <table>
 <tr>
@@ -118,7 +119,27 @@ The mark is a polished cross-section of banded onyx with a single sardonyx band.
 - [Roadmap](#roadmap)
 - [Author](#author)
 
+
+<p align="center"><img src="docs/readme/divider.svg" width="100%" alt=""></p>
+
 ## Guarantees
+
+### Watch it hold
+
+Each diagram loops a real failure and the exact way Onyx absorbs it. The [website](https://differentiatorx.github.io/onyx/) has all eight, interactive.
+
+<table>
+<tr>
+<td width="50%"><img alt="Retry storm: five requests with one Idempotency-Key create one payment" src="docs/readme/flow-retry-storm.svg" width="100%"></td>
+<td width="50%"><img alt="Duplicate webhook: three identical bank events are applied once" src="docs/readme/flow-duplicate-webhook.svg" width="100%"></td>
+</tr>
+<tr>
+<td width="50%"><img alt="Out-of-order events: a late authorized event cannot move a captured payment backwards" src="docs/readme/flow-out-of-order.svg" width="100%"></td>
+<td width="50%"><img alt="Silent bank: a lost webhook is recovered by polling the bank" src="docs/readme/flow-silent-bank.svg" width="100%"></td>
+</tr>
+</table>
+
+### Every failure, mapped to code
 
 | Failure in production | What Onyx does | Implementation |
 |:--|:--|:--|
@@ -137,6 +158,9 @@ The mark is a polished cross-section of banded onyx with a single sardonyx band.
 | One API key floods the system | Token bucket rate limiter as an atomic Redis Lua script | `middleware/rateLimit.js` |
 | Card testing and abuse | Rule-based risk scoring with Redis velocity counters | `domain/fraud.js` |
 | Floating-point money bugs | Integer paise end to end | `lib/money.js` |
+
+
+<p align="center"><img src="docs/readme/divider.svg" width="100%" alt=""></p>
 
 ## Architecture
 
@@ -214,6 +238,9 @@ After a full cycle the platform bank holds exactly the fees, and assets equal li
 
 </details>
 
+
+<p align="center"><img src="docs/readme/divider.svg" width="100%" alt=""></p>
+
 ## Quick start
 
 ### Docker
@@ -268,7 +295,12 @@ Set `PAYMENT_PROVIDER=razorpay` with your test `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_
 | Pay from a `mailinator.com` address, or 6 times from one email in 10 minutes | Risk score, reasons and a review or block decision |
 | Settle now, then run reconciliation | Both payout legs in the ledger and a clean match report |
 
+
+<p align="center"><img src="docs/readme/divider.svg" width="100%" alt=""></p>
+
 ## API reference
+
+<p align="center"><img alt="Terminal: the same request sent twice with one Idempotency-Key returns the same payment, replayed" src="docs/readme/terminal.svg" width="720"></p>
 
 Amounts are integers in paise. Authenticate with `Authorization: Bearer sk_test_...`.
 
@@ -341,6 +373,9 @@ Onyx-Signature: t=1760512345,v1=<hex hmac_sha256(secret, "t.rawBody")>
 
 Verify against the raw body and reject timestamps older than five minutes to block replays. `Onyx.verifyWebhook()` in `sdk/` does both.
 
+
+<p align="center"><img src="docs/readme/divider.svg" width="100%" alt=""></p>
+
 ## Testing
 
 ```bash
@@ -396,6 +431,9 @@ Patterns were studied from two open-source projects and implemented from scratch
 ## Website
 
 The landing page lives in [`docs/index.html`](docs/index.html) and is served by GitHub Pages at **https://differentiatorx.github.io/onyx/**. To publish it: repository Settings, Pages, deploy from branch `main`, folder `/docs`.
+
+
+<p align="center"><img src="docs/readme/divider.svg" width="100%" alt=""></p>
 
 ## Author
 
