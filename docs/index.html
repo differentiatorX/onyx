@@ -1,0 +1,474 @@
+<!doctype html>
+<!-- Onyx | Author: differentiatorX <madhur.m2006@gmail.com> | https://github.com/differentiatorX | MIT License -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Onyx: payments, set in stone</title>
+  <meta name="description" content="Onyx is an open-source payment gateway on MERN with idempotent APIs, a double-entry ledger, reliable webhooks and reconciliation. Built by differentiatorX." />
+  <meta name="author" content="differentiatorX (madhur.m2006@gmail.com)" />
+  <meta name="theme-color" content="#0d0e10" />
+  <meta property="og:title" content="Onyx: payments, set in stone" />
+  <meta property="og:description" content="A payment gateway built to stay correct when everything around it fails." />
+  <meta property="og:image" content="screenshots/overview.png" />
+  <link rel="icon" type="image/svg+xml" href="brand/onyx-mark.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --onyx: #0d0e10;
+      --onyx-2: #17181b;
+      --porcelain: #eeeff0;
+      --surface: #ffffff;
+      --ink: #0d0e10;
+      --muted: #5d6168;
+      --line: #dfe0e3;
+      --bone: #eceae5;
+      --slab-muted: #8e9198;
+      --slab-line: #26282c;
+      --sardonyx: #b97a3e;
+      --sardonyx-light: #e0b07c;
+      --credit: #1b7a55;
+      --debit: #b13a2c;
+      --serif: 'Instrument Serif', 'Iowan Old Style', Georgia, serif;
+      --sans: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+      color-scheme: light;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --porcelain: #0f1012;
+        --surface: #16171a;
+        --ink: #eceae5;
+        --muted: #9a9ea5;
+        --line: #26282c;
+        --credit: #52c493;
+        --debit: #ec7f6b;
+        color-scheme: dark;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+    body { margin: 0; background: var(--porcelain); color: var(--ink); font-family: var(--sans); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; }
+    :focus-visible { outline: 2px solid var(--sardonyx); outline-offset: 3px; border-radius: 4px; }
+    .wrap { width: min(1160px, 100% - 48px); margin: 0 auto; }
+    .num { font-variant-numeric: tabular-nums; }
+
+    /* Hero: the slab */
+    .slab {
+      background: radial-gradient(110% 120% at 85% 0%, #24262a 0%, var(--onyx-2) 35%, var(--onyx) 75%);
+      color: var(--bone);
+      padding-top: env(safe-area-inset-top, 0px);
+      position: relative;
+      overflow: hidden;
+    }
+    .strata { position: absolute; inset: 0; pointer-events: none; opacity: 0.55; }
+    .strata path { fill: none; stroke: var(--bone); stroke-opacity: 0.07; stroke-width: 1.2; }
+    .strata path.band { stroke: var(--sardonyx); stroke-opacity: 0.35; stroke-width: 1.6; }
+    nav.top { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; position: relative; z-index: 2; }
+    .logo { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; font-family: var(--serif); font-size: 30px; line-height: 1; color: var(--bone); }
+    .links { display: flex; gap: 28px; align-items: center; font-size: 15px; }
+    .links a { color: var(--slab-muted); text-decoration: none; }
+    .links a:hover { color: var(--bone); }
+    .links a.gh { color: var(--bone); border: 1px solid var(--slab-line); padding: 7px 14px; border-radius: 8px; }
+    .links a.gh:hover { border-color: var(--sardonyx); }
+
+    .hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 56px; align-items: center; padding: 64px 0 104px; position: relative; z-index: 2; }
+    .hero h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(56px, 7.4vw, 104px); line-height: 0.95; letter-spacing: -0.02em; margin: 0; }
+    .hero h1 em { font-style: italic; color: var(--sardonyx-light); }
+    .hero p.sub { color: #b5b8bd; font-size: 19px; max-width: 34em; margin: 28px 0 36px; }
+    .ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 500; font-size: 16px; padding: 13px 22px; border-radius: 10px; border: 1px solid transparent; }
+    .btn.light { background: var(--bone); color: var(--onyx); }
+    .btn.light:hover { background: #fff; }
+    .btn.line { border-color: var(--slab-line); color: var(--bone); }
+    .btn.line:hover { border-color: var(--sardonyx); }
+    .btn svg { width: 18px; height: 18px; }
+
+    /* Ledger card in the hero */
+    .ledger {
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid var(--slab-line);
+      border-radius: 16px;
+      padding: 22px 24px 20px;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 40px 80px -40px rgba(0, 0, 0, 0.8);
+    }
+    .ledger-head { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; color: var(--slab-muted); margin-bottom: 14px; }
+    .ledger-head strong { color: var(--bone); font-weight: 600; font-size: 15px; }
+    .ledger table { width: 100%; border-collapse: collapse; font-size: 15px; }
+    .ledger th { text-align: right; font-weight: 500; color: var(--slab-muted); font-size: 12.5px; padding: 0 0 8px; border-bottom: 1px solid var(--slab-line); }
+    .ledger th:first-child { text-align: left; }
+    .ledger td { padding: 11px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+    .ledger td.amt { text-align: right; font-family: var(--serif); font-size: 18px; font-variant-numeric: tabular-nums; width: 30%; }
+    .ledger td.acct.cr { padding-left: 22px; }
+    .ledger tr.entry td { font-size: 12px; color: var(--slab-muted); padding: 14px 0 4px; border: 0; }
+    .ledger tfoot td { border: 0; padding-top: 12px; font-weight: 600; }
+    .ledger tfoot td.amt span { border-bottom: 3px double var(--bone); padding-bottom: 2px; }
+    .balanced { display: flex; align-items: center; gap: 8px; margin-top: 16px; font-size: 13.5px; color: #7fd3ad; }
+    .balanced::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+    .reveal { opacity: 0; transform: translateY(6px); animation: lay 0.5s ease forwards; }
+    @keyframes lay { to { opacity: 1; transform: none; } }
+
+    /* Porcelain sections */
+    section { padding: 112px 0; }
+    .eyebrowless h2, h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(40px, 5vw, 64px); line-height: 1; letter-spacing: -0.015em; margin: 0 0 18px; }
+    .lead { color: var(--muted); font-size: 19px; max-width: 38em; margin: 0; }
+
+    /* Failure console */
+    .console { display: grid; grid-template-columns: 300px 1fr; gap: 0; margin-top: 56px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); overflow: hidden; }
+    .fails { border-right: 1px solid var(--line); padding: 10px; display: flex; flex-direction: column; gap: 2px; }
+    .fails button { all: unset; cursor: pointer; padding: 13px 16px; border-radius: 10px; font-size: 15.5px; color: var(--muted); display: block; }
+    .fails button:hover { color: var(--ink); background: color-mix(in srgb, var(--line) 45%, transparent); }
+    .fails button[aria-selected='true'] { color: var(--ink); background: color-mix(in srgb, var(--line) 70%, transparent); box-shadow: inset 2px 0 0 var(--sardonyx); }
+    .fails button:focus-visible { outline: 2px solid var(--sardonyx); outline-offset: -2px; }
+    .story { padding: 36px 40px; min-height: 420px; }
+    .story h3 { font-family: var(--serif); font-weight: 400; font-size: 34px; line-height: 1.1; margin: 0 0 10px; }
+    .story p { color: var(--muted); margin: 0 0 26px; max-width: 40em; }
+    .steps { list-style: none; margin: 0 0 28px; padding: 0; counter-reset: s; }
+    .steps li { position: relative; padding: 0 0 16px 40px; counter-increment: s; }
+    .steps li::before { content: counter(s); position: absolute; left: 0; top: 1px; width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; font-size: 12px; color: var(--muted); }
+    .steps li.win::before { content: ''; background: var(--credit); border-color: var(--credit); }
+    .steps li.win { color: var(--credit); font-weight: 500; }
+    .file { display: inline-flex; gap: 8px; align-items: center; font-family: var(--mono); font-size: 13px; color: var(--muted); border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px; text-decoration: none; }
+    .file:hover { border-color: var(--sardonyx); color: var(--ink); }
+
+    /* Lifecycle */
+    .flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 56px; border-top: 1px solid var(--line); }
+    .flow div { padding: 28px 28px 0 0; }
+    .flow div + div { padding-left: 28px; border-left: 1px solid var(--line); }
+    .flow .n { font-family: var(--serif); font-size: 44px; line-height: 1; color: var(--sardonyx); }
+    .flow h4 { margin: 14px 0 6px; font-size: 18px; font-weight: 600; }
+    .flow p { margin: 0; color: var(--muted); font-size: 15.5px; }
+
+    /* Product shot */
+    .shot { margin-top: 56px; border-radius: 16px; overflow: hidden; border: 1px solid var(--line); box-shadow: 0 50px 100px -50px rgba(13, 14, 16, 0.5); background: var(--surface); }
+    .shot img { display: block; width: 100%; height: auto; }
+    .shots2 { display: grid; grid-template-columns: 1.6fr 1fr; gap: 20px; margin-top: 20px; }
+    .shots2 .shot { margin-top: 0; }
+
+    /* Code */
+    .code-grid { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 56px; align-items: center; }
+    pre { margin: 0; background: var(--onyx); color: var(--bone); border-radius: 16px; padding: 26px 28px; overflow-x: auto; font-family: var(--mono); font-size: 13.5px; line-height: 1.7; border: 1px solid var(--slab-line); }
+    pre .c { color: #6f737a; }
+    pre .s { color: var(--sardonyx-light); }
+    pre .k { color: #9fd9bf; }
+    .points { list-style: none; padding: 0; margin: 28px 0 0; display: grid; gap: 14px; }
+    .points li { padding-left: 22px; position: relative; }
+    .points li::before { content: ''; position: absolute; left: 0; top: 11px; width: 10px; border-top: 2px solid var(--sardonyx); }
+
+    /* Stack */
+    .stack { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; margin-top: 56px; }
+    .stack div { background: var(--surface); padding: 26px 26px 28px; }
+    .stack strong { display: block; font-size: 17px; margin-bottom: 4px; }
+    .stack span { color: var(--muted); font-size: 15px; }
+
+    /* Closing slab */
+    .closing { background: var(--onyx); color: var(--bone); text-align: center; padding: 120px 0; position: relative; overflow: hidden; }
+    .closing h2 { color: var(--bone); }
+    .closing p { color: #b5b8bd; max-width: 34em; margin: 0 auto 36px; }
+    .quick { display: inline-block; text-align: left; margin: 0 auto 36px; }
+    footer { background: var(--onyx); color: var(--slab-muted); border-top: 1px solid var(--slab-line); padding: 32px 0 calc(32px + env(safe-area-inset-bottom, 0px)); font-size: 14px; }
+    footer .wrap { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; align-items: center; }
+    footer a { color: var(--bone); text-decoration-color: var(--sardonyx); text-underline-offset: 3px; }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; padding: 32px 0 72px; gap: 40px; }
+      .links a:not(.gh) { display: none; }
+      section { padding: 80px 0; }
+      .console { grid-template-columns: 1fr; }
+      .fails { flex-direction: row; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+      .fails button { white-space: nowrap; }
+      .fails button[aria-selected='true'] { box-shadow: inset 0 -2px 0 var(--sardonyx); }
+      .story { padding: 28px 22px; min-height: 0; }
+      .flow { grid-template-columns: 1fr 1fr; }
+      .flow div:nth-child(3) { border-left: 0; padding-left: 0; }
+      .code-grid, .shots2 { grid-template-columns: 1fr; gap: 32px; }
+      .stack { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 520px) {
+      .flow, .stack { grid-template-columns: 1fr; }
+      .flow div + div { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { animation: none; opacity: 1; transform: none; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="slab">
+  <svg class="strata" viewBox="0 0 1440 760" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <path d="M-40 640 C 300 520, 620 700, 980 560 S 1400 470, 1500 520" />
+    <path d="M-40 600 C 320 470, 640 650, 1000 510 S 1400 420, 1500 470" />
+    <path class="band" d="M-40 552 C 340 420, 660 600, 1020 460 S 1400 370, 1500 420" />
+    <path d="M-40 500 C 360 370, 680 550, 1040 410 S 1400 320, 1500 370" />
+    <path d="M-40 440 C 380 310, 700 490, 1060 350 S 1400 260, 1500 310" />
+    <path d="M-40 370 C 400 240, 720 420, 1080 280 S 1400 190, 1500 240" />
+  </svg>
+
+  <div class="wrap">
+    <nav class="top" aria-label="Main">
+      <a class="logo" href="#" aria-label="Onyx home">
+        <svg width="36" height="36" viewBox="0 0 64 64" aria-hidden="true">
+          <defs>
+            <radialGradient id="ms" cx="35%" cy="28%" r="85%"><stop offset="0" stop-color="#303236"/><stop offset="0.5" stop-color="#141518"/><stop offset="1" stop-color="#060607"/></radialGradient>
+            <linearGradient id="ma" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E2B07A"/><stop offset="1" stop-color="#A86E35"/></linearGradient>
+            <linearGradient id="mh" x1="0.1" y1="0" x2="0.7" y2="0.8"><stop offset="0" stop-color="#fff" stop-opacity="0.28"/><stop offset="0.5" stop-color="#fff" stop-opacity="0"/></linearGradient>
+            <clipPath id="mc"><circle cx="32" cy="32" r="30"/></clipPath>
+          </defs>
+          <circle cx="32" cy="32" r="30" fill="url(#ms)"/>
+          <g clip-path="url(#mc)"><g transform="rotate(-32 26 42)">
+            <ellipse cx="26" cy="42" rx="40" ry="27" fill="none" stroke="#EDE9E2" stroke-opacity="0.18" stroke-width="1.2"/>
+            <ellipse cx="26" cy="42" rx="31" ry="21" fill="none" stroke="#EDE9E2" stroke-opacity="0.32" stroke-width="1.6"/>
+            <ellipse cx="26" cy="42" rx="22.5" ry="15" fill="none" stroke="url(#ma)" stroke-width="3.6"/>
+            <ellipse cx="26" cy="42" rx="14" ry="9.2" fill="none" stroke="#EDE9E2" stroke-opacity="0.75" stroke-width="2"/>
+            <ellipse cx="26" cy="42" rx="6.5" ry="4.2" fill="#EDE9E2" fill-opacity="0.9"/>
+          </g></g>
+          <circle cx="32" cy="32" r="30" fill="url(#mh)"/>
+          <circle cx="32" cy="32" r="29.5" fill="none" stroke="#fff" stroke-opacity="0.12" stroke-width="1"/>
+        </svg>
+        Onyx
+      </a>
+      <div class="links">
+        <a href="#failures">Guarantees</a>
+        <a href="#how">How it works</a>
+        <a href="#developers">Developers</a>
+        <a class="gh" href="https://github.com/differentiatorX/onyx">GitHub</a>
+      </div>
+    </nav>
+
+    <div class="hero">
+      <div>
+        <h1>Payments,<br><em>set in stone.</em></h1>
+        <p class="sub">Onyx is an open-source payment gateway that stays correct when everything around it fails. Retries never double-charge, every rupee is booked twice, and no webhook is ever lost.</p>
+        <div class="ctas">
+          <a class="btn light" href="https://github.com/differentiatorX/onyx">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+            View on GitHub
+          </a>
+          <a class="btn line" href="#run">Run it in one command</a>
+        </div>
+      </div>
+
+      <div class="ledger" aria-label="Example ledger entries for one payment">
+        <div class="ledger-head"><strong>pay_7Hq2Lm3xQ9</strong><span>Journal</span></div>
+        <table>
+          <thead><tr><th>Account</th><th>Debit</th><th>Credit</th></tr></thead>
+          <tbody>
+            <tr class="entry reveal" style="animation-delay:.15s"><td colspan="3">Capture, customer paid ₹4,590 with a 2% fee</td></tr>
+            <tr class="reveal" style="animation-delay:.35s"><td class="acct">Due from provider</td><td class="amt">4,590.00</td><td class="amt"></td></tr>
+            <tr class="reveal" style="animation-delay:.55s"><td class="acct cr">Owed to merchant</td><td class="amt"></td><td class="amt">4,498.20</td></tr>
+            <tr class="reveal" style="animation-delay:.75s"><td class="acct cr">Fee revenue</td><td class="amt"></td><td class="amt">91.80</td></tr>
+            <tr class="entry reveal" style="animation-delay:1s"><td colspan="3">Refund ₹1,500 to the customer</td></tr>
+            <tr class="reveal" style="animation-delay:1.2s"><td class="acct">Owed to merchant</td><td class="amt">1,500.00</td><td class="amt"></td></tr>
+            <tr class="reveal" style="animation-delay:1.4s"><td class="acct cr">Due from provider</td><td class="amt"></td><td class="amt">1,500.00</td></tr>
+          </tbody>
+          <tfoot class="reveal" style="animation-delay:1.7s"><tr><td>Totals</td><td class="amt"><span>₹6,090.00</span></td><td class="amt"><span>₹6,090.00</span></td></tr></tfoot>
+        </table>
+        <div class="balanced reveal" style="animation-delay:1.9s">Debits equal credits. These books balance.</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="failures">
+    <div class="wrap">
+      <h2>Payments break in eight ways.</h2>
+      <p class="lede">Most projects only handle the happy path. Onyx was built around the failures, and ships a deliberately unreliable mock bank so you can trigger each one yourself.</p>
+
+      <div class="console">
+        <div class="fails" role="tablist" aria-label="Failure scenarios" id="fails"></div>
+        <div class="story" role="tabpanel" id="story" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how" style="padding-top: 0">
+    <div class="wrap">
+      <h2>From checkout to payout.</h2>
+      <p class="lede">One payment, start to finish. Each step commits as a single database transaction, so nothing ever lands halfway.</p>
+      <div class="flow">
+        <div><div class="n">1</div><h4>Create</h4><p>Your server asks for a payment with an Idempotency-Key. Risk rules score it before anything else happens.</p></div>
+        <div><div class="n">2</div><h4>Pay</h4><p>The customer pays on hosted checkout through Razorpay or the mock bank. Signed webhooks report the result.</p></div>
+        <div><div class="n">3</div><h4>Book</h4><p>The capture, its ledger entry and your webhook event commit together. Workers deliver the webhook with retries.</p></div>
+        <div><div class="n">4</div><h4>Settle</h4><p>The provider pays the platform, the platform pays you, and reconciliation checks it all against the bank.</p></div>
+      </div>
+
+      <div class="shot"><img src="screenshots/overview.png" alt="Onyx dashboard showing balances, captured volume and recent payments" loading="lazy"></div>
+      <div class="shots2">
+        <div class="shot"><img src="screenshots/payment-dark.png" alt="Payment detail with timeline, bank messages, risk score and ledger" loading="lazy"></div>
+        <div class="shot"><img src="screenshots/checkout.png" alt="Hosted checkout page" loading="lazy"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="developers" style="padding-top: 0">
+    <div class="wrap code-grid">
+      <div>
+        <h2>Retry anything. Safely.</h2>
+        <p class="lede">Send the same request ten times and Onyx creates one payment. The bundled SDK retries for you, so a flaky network is never your problem.</p>
+        <ul class="points">
+          <li>Amounts are integers in paise, end to end</li>
+          <li>Webhooks signed with HMAC-SHA256 and a timestamp to block replays</li>
+          <li>Rate limits per key, enforced atomically in Redis</li>
+          <li>Cursor pagination, typed errors and a zero-dependency Node SDK</li>
+        </ul>
+      </div>
+<pre><code><span class="c"># Create a payment. Retrying with the same key is safe.</span>
+curl localhost:4000/v1/payments \
+  -H <span class="s">"Authorization: Bearer sk_test_..."</span> \
+  -H <span class="s">"Idempotency-Key: order-1042"</span> \
+  -d <span class="s">'{"amount": 49900,
+       "customer": {"email": "riya@example.com"}}'</span>
+
+<span class="c"># Second call, same key: same payment, replayed.</span>
+HTTP/1.1 <span class="k">201 Created</span>
+Idempotent-Replayed: <span class="k">true</span>
+{ <span class="s">"id"</span>: <span class="s">"pay_7Hq2Lm3xQ9"</span>, <span class="s">"status"</span>: <span class="s">"created"</span>,
+  <span class="s">"checkout_url"</span>: <span class="s">"http://localhost:5173/checkout/..."</span> }</code></pre>
+    </div>
+  </section>
+
+  <section style="padding-top: 0">
+    <div class="wrap">
+      <h2>Built on MERN, made for production.</h2>
+      <div class="stack">
+        <div><strong>MongoDB</strong><span>Replica set with multi-document transactions</span></div>
+        <div><strong>Express</strong><span>Merchant API, dashboard API and webhooks</span></div>
+        <div><strong>React</strong><span>Dashboard and hosted checkout</span></div>
+        <div><strong>Node.js</strong><span>API and worker processes</span></div>
+        <div><strong>Redis</strong><span>Rate limits, idempotency cache, risk counters</span></div>
+        <div><strong>BullMQ</strong><span>Retries, backoff, dead letters, schedules</span></div>
+        <div><strong>Razorpay</strong><span>Real test-mode checkout, capture and refunds</span></div>
+        <div><strong>Docker</strong><span>Everything up with one command</span></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<section class="closing" id="run">
+  <svg class="strata" viewBox="0 0 1440 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <path d="M-40 520 C 300 420, 620 560, 980 440 S 1400 380, 1500 420" />
+    <path class="band" d="M-40 470 C 320 370, 640 510, 1000 390 S 1400 330, 1500 370" />
+    <path d="M-40 410 C 340 310, 660 450, 1020 330 S 1400 270, 1500 310" />
+  </svg>
+  <div class="wrap" style="position: relative">
+    <h2>See it fail. Watch it hold.</h2>
+    <p>Clone the repo, start everything, and seed realistic traffic with declines, duplicates, refunds and webhook retries.</p>
+<pre class="quick"><code>git clone https://github.com/differentiatorX/onyx.git
+cd onyx && docker compose up --build
+<span class="c"># then open localhost:5173</span></code></pre>
+    <div class="ctas" style="justify-content: center">
+      <a class="btn light" href="https://github.com/differentiatorX/onyx">Get the code</a>
+      <a class="btn line" href="https://github.com/differentiatorX/onyx/blob/main/docs/INTERVIEW.md">Read the design deep-dive</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>Onyx, payments set in stone. Built by <a href="https://github.com/differentiatorX">differentiatorX</a>.</span>
+    <span><a href="mailto:madhur.m2006@gmail.com">madhur.m2006@gmail.com</a> &nbsp; MIT License</span>
+  </div>
+</footer>
+
+<script>
+  const FAILURES = [
+    {
+      tab: 'Retry storm',
+      title: 'The request timed out. The client tries again.',
+      body: 'A merchant server never got a response, so it sends the same payment request again, five times, at once.',
+      steps: ['The first request claims the Idempotency-Key with a unique database index', 'The other four find the claim and wait or replay', 'The finished response is stored before it is sent', 'One payment exists. Every retry gets the same answer'],
+      file: 'server/src/middleware/idempotency.js',
+    },
+    {
+      tab: 'Duplicate webhook',
+      title: 'The bank says "captured" three times.',
+      body: 'Providers deliver webhooks at least once, which means sometimes more than once.',
+      steps: ['Each event is stored under a unique provider event id', 'Copies two and three hit the index and are counted, not applied', 'Onyx answers 200 so the bank stops retrying', 'The payment is captured, and booked, exactly once'],
+      file: 'server/src/services/providerEventService.js',
+    },
+    {
+      tab: 'Out-of-order events',
+      title: '"Authorized" arrives after "Captured".',
+      body: 'Networks reorder messages. A naive system would move the payment backwards.',
+      steps: ['Every status change goes through one state machine', 'Captured has no path back to authorized', 'The late event is marked ignored, with the reason recorded', 'The payment stays captured'],
+      file: 'server/src/domain/paymentStateMachine.js',
+    },
+    {
+      tab: 'Silent bank',
+      title: 'The customer paid. The bank never called back.',
+      body: 'The money moved, but the webhook was lost somewhere between the bank and Onyx.',
+      steps: ['A worker looks for payments stuck in processing', 'It asks the bank directly for the payment status', 'The bank says captured, so Onyx books it', 'The timeline records that polling recovered it'],
+      file: 'server/src/services/paymentService.js',
+    },
+    {
+      tab: 'Merchant is down',
+      title: 'Your server is offline for an hour.',
+      body: 'Onyx still owes you a "payment captured" webhook.',
+      steps: ['Delivery fails and is retried with exponential backoff', 'Every attempt is logged with its status and timing', 'After eight attempts the delivery moves to a dead-letter state', 'You replay it from the dashboard in one click'],
+      file: 'server/src/services/webhookService.js',
+    },
+    {
+      tab: 'Crash mid-commit',
+      title: 'The server dies right after saving the payment.',
+      body: 'If the webhook were sent separately, this crash would lose it forever.',
+      steps: ['The status change, ledger entry and event are one MongoDB transaction', 'The event waits in an outbox until a worker relays it', 'A relay that crashes halfway can run again harmlessly', 'Nothing is lost and nothing is sent twice'],
+      file: 'server/src/models/OutboxEvent.js',
+    },
+    {
+      tab: 'Refund race',
+      title: 'Two full refunds, the same millisecond.',
+      body: 'Both requests read the payment and both see the full amount available.',
+      steps: ['Each refund reserves its amount with one atomic conditional update', 'The database lets only one reservation fit under the captured amount', 'The second refund is rejected with a clear error', 'More money can never leave than came in'],
+      file: 'server/src/services/refundService.js',
+    },
+    {
+      tab: 'Silent drift',
+      title: 'Are the books actually right?',
+      body: 'A balance field can quietly go wrong and nobody notices for months.',
+      steps: ['Every rupee is booked as balanced debits and credits', 'Balances are recomputed from the journal and compared', 'Reconciliation checks every payment against the bank\'s own records', 'Drift shows up the same hour, not the next audit'],
+      file: 'server/src/services/ledgerService.js',
+    },
+  ];
+
+  const tabs = document.getElementById('fails');
+  const story = document.getElementById('story');
+  const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+
+  function show(i) {
+    [...tabs.children].forEach((b, j) => {
+      b.setAttribute('aria-selected', String(i === j));
+      b.tabIndex = i === j ? 0 : -1;
+    });
+    const f = FAILURES[i];
+    story.innerHTML = `
+      <h3>${esc(f.title)}</h3>
+      <p>${esc(f.body)}</p>
+      <ol class="steps">${f.steps.map((s, k) => `<li class="${k === f.steps.length - 1 ? 'win' : ''}">${esc(s)}</li>`).join('')}</ol>
+      <a class="file" href="https://github.com/differentiatorX/onyx/blob/main/${f.file}">${esc(f.file)}</a>`;
+  }
+
+  FAILURES.forEach((f, i) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.role = 'tab';
+    b.id = `tab-${i}`;
+    b.textContent = f.tab;
+    b.addEventListener('click', () => show(i));
+    b.addEventListener('keydown', (e) => {
+      const n = FAILURES.length;
+      if (['ArrowDown', 'ArrowRight'].includes(e.key)) { e.preventDefault(); const k = (i + 1) % n; show(k); tabs.children[k].focus(); }
+      if (['ArrowUp', 'ArrowLeft'].includes(e.key)) { e.preventDefault(); const k = (i - 1 + n) % n; show(k); tabs.children[k].focus(); }
+    });
+    tabs.appendChild(b);
+  });
+  show(0);
+</script>
+</body>
+</html>

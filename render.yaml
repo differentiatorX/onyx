@@ -1,0 +1,40 @@
+# Onyx | Author: differentiatorX <madhur.m2006@gmail.com>
+# Render Blueprint: API with in-process workers + Redis-compatible Key Value, both on free plans.
+# Render dashboard: New, Blueprint, pick this repo. Then fill the three "sync: false" values.
+services:
+  - type: web
+    name: onyx-api
+    runtime: node
+    rootDir: server
+    plan: free
+    buildCommand: npm ci --omit=dev
+    startCommand: node src/server.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: RUN_WORKERS_IN_API
+        value: "true"
+      - key: ENABLE_DEV_ROUTES
+        value: "true"
+      - key: PAYMENT_PROVIDER
+        value: mockbank
+      - key: JWT_SECRET
+        generateValue: true
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: onyx-redis
+          property: connectionString
+      - key: MONGO_URI
+        sync: false # MongoDB Atlas connection string, ending in /onyx?retryWrites=true&w=majority
+      - key: CLIENT_URL
+        sync: false # your Vercel URL, e.g. https://onyx-differentiatorx.vercel.app
+      - key: INTERNAL_API_URL
+        sync: false # this service's own URL, e.g. https://onyx-api.onrender.com
+
+  - type: keyvalue
+    name: onyx-redis
+    plan: free
+    maxmemoryPolicy: noeviction # BullMQ must never have its keys evicted
+    ipAllowList: [] # reachable only from your Render services

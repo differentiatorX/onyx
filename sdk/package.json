@@ -1,0 +1,19 @@
+{
+  "name": "@onyx/node",
+  "version": "0.1.0",
+  "description": "Tiny Node.js client for the Onyx API: payments, refunds and webhook verification",
+  "author": "differentiatorX <madhur.m2006@gmail.com> (https://github.com/differentiatorX)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/differentiatorX/onyx.git"
+  },
+  "homepage": "https://github.com/differentiatorX/onyx#readme",
+  "bugs": {
+    "url": "https://github.com/differentiatorX/onyx/issues"
+  },
+  "main": "index.js",
+  "engines": {
+    "node": ">=18"
+  }
+}

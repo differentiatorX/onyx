@@ -1,0 +1,71 @@
+# Onyx | Author: differentiatorX <madhur.m2006@gmail.com>
+# One command: docker compose up --build
+# Dashboard: http://localhost:5173   API: http://localhost:4000
+
+x-server-env: &server-env
+  NODE_ENV: production
+  MONGO_URI: mongodb://mongo:27017/onyx?replicaSet=rs0
+  REDIS_URL: redis://redis:6379
+  JWT_SECRET: ${JWT_SECRET:-local-demo-secret-change-me-0f9a8b7c6d5e}
+  CLIENT_URL: http://localhost:5173
+  INTERNAL_API_URL: http://api:4000
+  PAYMENT_PROVIDER: ${PAYMENT_PROVIDER:-mockbank}
+  RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID:-}
+  RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET:-}
+  RAZORPAY_WEBHOOK_SECRET: ${RAZORPAY_WEBHOOK_SECRET:-}
+  ENABLE_DEV_ROUTES: "true"
+  SETTLEMENT_DELAY_MINUTES: "2"
+
+services:
+  mongo:
+    image: mongo:7
+    command: ["--replSet", "rs0", "--bind_ip_all"]
+    ports: ["27017:27017"]
+    volumes: ["mongo-data:/data/db"]
+    healthcheck:
+      # Initiates the single-node replica set on first boot (transactions need one), then waits for PRIMARY.
+      test: ["CMD-SHELL", "mongosh --quiet --eval \"try { rs.status() } catch (e) { rs.initiate({_id:'rs0',members:[{_id:0,host:'mongo:27017'}]}) }; quit(db.hello().isWritablePrimary ? 0 : 1)\""]
+      interval: 5s
+      timeout: 10s
+      retries: 30
+      start_period: 10s
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory-policy", "noeviction"]
+    ports: ["6379:6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 10
+
+  api:
+    build: ./server
+    environment:
+      <<: *server-env
+      SERVICE_NAME: onyx-api
+    ports: ["4000:4000"]
+    depends_on:
+      mongo: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    restart: unless-stopped
+
+  worker:
+    build: ./server
+    command: ["node", "src/worker.js"]
+    environment:
+      <<: *server-env
+      SERVICE_NAME: onyx-worker
+    depends_on:
+      mongo: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      api: { condition: service_started }
+    restart: unless-stopped
+
+  dashboard:
+    build: ./client
+    ports: ["5173:80"]
+    depends_on: [api]
+
+volumes:
+  mongo-data:
