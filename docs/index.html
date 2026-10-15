@@ -11,6 +11,7 @@
   <meta property="og:title" content="Onyx: payments, set in stone" />
   <meta property="og:description" content="A payment gateway built to stay correct when everything around it fails." />
   <meta property="og:image" content="screenshots/overview.png" />
+  <link rel="preconnect" href="https://onyx-omega-fawn.vercel.app" />
   <link rel="icon" type="image/svg+xml" href="brand/onyx-mark.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -126,6 +127,8 @@
     @keyframes fadeUp { to { opacity: 1; transform: none; } }
     .hero p.sub { color: #b5b8bd; font-size: 19px; max-width: 34em; margin: 28px 0 36px; animation-delay: 0.45s; }
     .ctas { display: flex; gap: 12px; flex-wrap: wrap; animation-delay: 0.6s; }
+    .wake { margin: 18px 0 0; font-size: 13.5px; color: var(--slab-muted); animation-delay: 0.75s; }
+    .wake .live { color: var(--bone); margin-right: 4px; }
     .btn { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 500; font-size: 16px; padding: 13px 22px; border-radius: 10px; border: 1px solid transparent; position: relative; transition: background 0.3s, border-color 0.3s, box-shadow 0.3s; will-change: transform; }
     .btn.light { background: var(--bone); color: var(--onyx); box-shadow: 0 10px 30px -12px rgba(224, 176, 124, 0.45); }
     .btn.light:hover { background: #fff; box-shadow: 0 14px 40px -12px rgba(224, 176, 124, 0.7); }
@@ -384,6 +387,7 @@
         <a href="#failures" tabindex="-1">Guarantees</a>
         <a href="#how" tabindex="-1">How it works</a>
         <a href="#developers" tabindex="-1">Developers</a>
+        <a href="https://onyx-omega-fawn.vercel.app/" tabindex="-1">Live demo</a>
         <a class="gh" href="https://github.com/differentiatorX/onyx" tabindex="-1">GitHub</a>
       </div>
     </nav>
@@ -423,6 +427,7 @@
         <a href="#failures">Guarantees</a>
         <a href="#how">How it works</a>
         <a href="#developers">Developers</a>
+        <a href="https://onyx-omega-fawn.vercel.app/">Live demo</a>
         <a class="gh" href="https://github.com/differentiatorX/onyx">GitHub</a>
       </div>
     </nav>
@@ -432,12 +437,13 @@
         <h1><span class="ln"><span>Payments,</span></span><span class="ln"><span><em>set in stone.</em></span></span></h1>
         <p class="sub fade-in">Onyx is an open-source payment gateway that stays correct when everything around it fails. Retries never double-charge, every rupee is booked twice, and no webhook is ever lost.</p>
         <div class="ctas fade-in">
-          <a class="btn light magnetic" href="https://github.com/differentiatorX/onyx">
+          <a class="btn light magnetic" href="https://onyx-omega-fawn.vercel.app/">Try the live demo <span class="arrow" aria-hidden="true">→</span></a>
+          <a class="btn line magnetic" href="https://github.com/differentiatorX/onyx">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
             View on GitHub
           </a>
-          <a class="btn line magnetic" href="#run">Run it in one command <span class="arrow" aria-hidden="true">→</span></a>
         </div>
+        <p class="wake fade-in"><span class="live">Demo runs on free hosting.</span> The first visit can take up to a minute while the server wakes up.</p>
       </div>
 
       <div class="stage" id="stage">
@@ -591,7 +597,7 @@ Idempotent-Replayed: <span class="k">true</span>
   <div class="grain" aria-hidden="true"></div>
   <div class="wrap" style="position: relative; z-index: 2">
     <h2 class="split" data-split>See it fail. Watch it hold.</h2>
-    <p data-reveal style="--d: 0.15s">Clone the repo, start everything, and seed realistic traffic with declines, duplicates, refunds and webhook retries.</p>
+    <p data-reveal style="--d: 0.15s">Try it in the browser, or clone the repo and run everything locally with realistic traffic: declines, duplicates, refunds and webhook retries.</p>
     <div class="term" data-reveal style="--d: 0.25s">
       <div class="term-bar"><i></i><i></i><i></i><span>one command</span></div>
 <pre><code>git clone https://github.com/differentiatorX/onyx.git
@@ -599,7 +605,8 @@ cd onyx && docker compose up --build
 <span class="c"># then open localhost:5173</span></code></pre>
     </div>
     <div class="ctas" data-reveal style="--d: 0.35s">
-      <a class="btn light magnetic" href="https://github.com/differentiatorX/onyx">Get the code <span class="arrow" aria-hidden="true">→</span></a>
+      <a class="btn light magnetic" href="https://onyx-omega-fawn.vercel.app/">Try the live demo <span class="arrow" aria-hidden="true">→</span></a>
+      <a class="btn line magnetic" href="https://github.com/differentiatorX/onyx">Get the code</a>
       <a class="btn line magnetic" href="https://github.com/differentiatorX/onyx/blob/main/docs/INTERVIEW.md">Read the design deep-dive</a>
     </div>
   </div>

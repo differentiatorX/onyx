@@ -5,6 +5,7 @@
 <br><br>
 
 <p>
+  <a href="https://onyx-omega-fawn.vercel.app/"><img alt="Live demo" src="https://img.shields.io/badge/live%20demo-try%20it-B97A3E?labelColor=1d1f23"></a>
   <a href="https://github.com/differentiatorX/onyx/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/differentiatorX/onyx/actions/workflows/ci.yml/badge.svg"></a>
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-0D0E10?labelColor=1d1f23">
   <img alt="Tests" src="https://img.shields.io/badge/unit%20tests-30%20passing-B97A3E?labelColor=1d1f23">
@@ -23,6 +24,7 @@
 </p>
 
 <p>
+  <a href="https://onyx-omega-fawn.vercel.app/"><strong>Live demo</strong></a> &nbsp;·&nbsp;
   <a href="https://differentiatorx.github.io/onyx/"><strong>Website</strong></a> &nbsp;·&nbsp;
   <a href="#quick-start">Quick start</a> &nbsp;·&nbsp;
   <a href="#guarantees">Guarantees</a> &nbsp;·&nbsp;
@@ -243,6 +245,10 @@ After a full cycle the platform bank holds exactly the fees, and assets equal li
 
 ## Quick start
 
+### Try it online
+
+**[onyx-omega-fawn.vercel.app](https://onyx-omega-fawn.vercel.app/)**: create a test account, make a payment, pick how the mock bank behaves, then refund it and watch the ledger and webhooks update. It runs on free hosting, so the first load can take up to a minute while the server wakes up.
+
 ### Docker
 
 ```bash
@@ -430,7 +436,7 @@ Patterns were studied from two open-source projects and implemented from scratch
 
 ## Website
 
-The landing page lives in [`docs/index.html`](docs/index.html) and is served by GitHub Pages at **https://differentiatorx.github.io/onyx/**. To publish it: repository Settings, Pages, deploy from branch `main`, folder `/docs`.
+The live demo runs at **https://onyx-omega-fawn.vercel.app/** (Vercel for the dashboard, Render for the API and workers, MongoDB Atlas). The landing page lives in [`docs/index.html`](docs/index.html) and is served by GitHub Pages at **https://differentiatorx.github.io/onyx/**. To publish it: repository Settings, Pages, deploy from branch `main`, folder `/docs`.
 
 
 <p align="center"><img src="docs/readme/divider.svg" width="100%" alt=""></p>
