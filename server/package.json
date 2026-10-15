@@ -1,0 +1,52 @@
+{
+  "name": "onyx-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Onyx API and workers: payment gateway with double-entry ledger, idempotency, outbox webhooks, reconciliation and settlement",
+  "author": "differentiatorX <madhur.m2006@gmail.com> (https://github.com/differentiatorX)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/differentiatorX/onyx.git"
+  },
+  "homepage": "https://github.com/differentiatorX/onyx#readme",
+  "bugs": {
+    "url": "https://github.com/differentiatorX/onyx/issues"
+  },
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "dev:worker": "nodemon src/worker.js",
+    "start": "node src/server.js",
+    "start:worker": "node src/worker.js",
+    "seed": "node scripts/seed.js",
+    "test": "jest"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "bullmq": "^5.21.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "helmet": "^8.0.0",
+    "ioredis": "^5.4.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.7.2",
+    "pino": "^9.5.0",
+    "pino-http": "^10.3.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.7"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ]
+  }
+}
